@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\BasketIsNotEmpty;
+use App\Http\Middleware\CheckIsAdmin;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -62,5 +64,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'admin' => \App\Http\Middleware\CheckIsAdmin::class,
+        'basket_not_empty' => \App\Http\Middleware\BasketIsNotEmpty::class,
     ];
 }
