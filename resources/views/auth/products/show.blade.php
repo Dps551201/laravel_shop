@@ -51,6 +51,10 @@
                     @endif
                 </td>
             </tr>
+            <tr>
+                <td>Количество</td>
+                <td>{{$product->count}}</td>
+            </tr>
             </tbody>
         </table>
     </div>

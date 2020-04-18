@@ -19,7 +19,9 @@ class Order extends Model
     public function calculateFullAmount()
     {
         $amount = 0;
-        foreach($this->products as $product) {
+        $products = $this->products()->withTrashed()->get();
+
+        foreach($products as $product) {
             $amount += $product->getPriceForCount();
         }
         return $amount;
