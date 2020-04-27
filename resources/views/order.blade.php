@@ -6,7 +6,7 @@
     <h1>Подтвердите заказ:</h1>
     <div class="container">
         <div class="row justify-content-center">
-            <p>Общая стоимость: <b>{{$order->calculateFullAmount()}} ₽.</b></p>
+            <p>Общая стоимость: <b>{{$order->getFullAmount()}} ₽.</b></p>
             <form action="{{route('order-confirm')}}" method="POST">
                 @csrf
                 <div>
@@ -29,12 +29,14 @@
                         </div>
                         <br>
                         <br>
-                        <div class="form-group">
-                            <label for="name" class="control-label col-lg-offset-3 col-lg-2">Email: </label>
-                            <div class="col-lg-4">
-                                <input type="text" name="email" id="email" value="" class="form-control">
+                        @guest()
+                            <div class="form-group">
+                                <label for="email" class="control-label col-lg-offset-3 col-lg-2">Email: </label>
+                                <div class="col-lg-4">
+                                    <input type="text" name="email" id="email" value="" class="form-control">
+                                </div>
                             </div>
-                        </div>
+                        @endguest
                     </div>
                     <br>
                     <input type="submit" class="btn btn-success" value="Подтвердите заказ">

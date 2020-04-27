@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Sku;
+use App\Observers\SkuObserver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -32,5 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('admin', function () {
             return Auth::check() && Auth::user()->isAdmin();
         });
+
+        Sku::observe(SkuObserver::class);
     }
 }

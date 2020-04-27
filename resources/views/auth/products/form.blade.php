@@ -13,7 +13,6 @@
         @else
             <h1>Добавить товар</h1>
         @endisset
-
         <form method="post" enctype="multipart/form-data"
               @isset($product)
               action="{{route('products.update', $product)}}"
@@ -45,6 +44,15 @@
                 </div>
                 <br>
                 <div class="input-group row">
+                    <label for="name_en" class="col-sm-2 col-form-label">Наименование en: </label>
+                    <div class="col-sm-6">
+                        @include('auth.layouts.error', ['fieldName' => 'name_en'])
+                        <input type="text" class="form-control" name="name_en" id="name_en"
+                               value="{{old('name_en', isset($product) ? $product->name_en : null)}}">
+                    </div>
+                </div>
+                <br>
+                <div class="input-group row">
                     <label for="category_id" class="col-sm-2 col-form-label">Категория товара: </label>
                     <div class="col-sm-6">
                         @include('auth.layouts.error', ['fieldName' => 'category_id'])
@@ -64,11 +72,20 @@
                 </div>
                 <br>
                 <div class="input-group row">
-                    <label for="code" class="col-sm-2 col-form-label">Описание: </label>
+                    <label for="description" class="col-sm-2 col-form-label">Описание: </label>
                     <div class="col-sm-6">
                         @include('auth.layouts.error', ['fieldName' => 'description'])
                         <textarea type="text" class="form-control" name="description" id="description" cols="72"
                                   rows="7">{{old('code', isset($product) ? $product->description : null)}}</textarea>
+                    </div>
+                </div>
+                <br>
+                <div class="input-group row">
+                    <label for="description_en" class="col-sm-2 col-form-label">Описание en: </label>
+                    <div class="col-sm-6">
+                        @include('auth.layouts.error', ['fieldName' => 'description_en'])
+                        <textarea type="text" class="form-control" name="description_en" id="description_en" cols="72"
+                                  rows="7">{{old('code', isset($product) ? $product->description_en : null)}}</textarea>
                     </div>
                 </div>
                 <br>
@@ -82,21 +99,21 @@
                     </div>
                 </div>
                 <br>
-                <div class="input-group row">
-                    <label for="price" class="col-sm-2 col-form-label">Цена: </label>
+                <div class="form-group row">
+                    <label for="property_id[]" class="col-sm-2 col-form-label">Свойства товара: </label>
                     <div class="col-sm-6">
-                        @include('auth.layouts.error', ['fieldName' => 'price'])
-                        <input type="text" class="form-control" name="price" id="price"
-                               value="{{old('price', isset($product) ? $product->price : null)}}">
-                    </div>
-                </div>
-                <br>
-                <div class="input-group row">
-                    <label for="count" class="col-sm-2 col-form-label">Количество: </label>
-                    <div class="col-sm-6">
-                        @include('auth.layouts.error', ['fieldName' => 'count'])
-                        <input type="text" class="form-control" name="count" id="count"
-                               value="{{old('count', isset($product) ? $product->count : null)}}">
+                        @include('auth.layouts.error', ['fieldName' =>'property_id[]'])
+                        <select name="property_id[]" multiple class="form-control" id="property_id[]">
+                            @foreach($properties as $property)
+                                <option value="{{$property->id}}"
+                                    @isset($product)
+                                        @if($product->properties->contains($property->id))
+                                        selected
+                                        @endif
+                                    @endisset
+                                >{{$property->name}}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <br>

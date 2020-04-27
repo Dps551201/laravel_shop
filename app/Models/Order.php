@@ -6,9 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    public function products()
+    protected $fillable = ['user_id', 'amount', 'currency_id'];
+
+    public function skus()
     {
-        return $this->belongsToMany(Product::class)->withPivot('count')->withTimestamps();
+        return $this->belongsToMany(Sku::class)->withPivot('count', 'price')->withTimestamps();
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     public function scopeActive($query)
@@ -19,41 +26,42 @@ class Order extends Model
     public function calculateFullAmount()
     {
         $amount = 0;
-        $products = $this->products()->withTrashed()->get();
+        $skus = $this->skus()->withTrashed()->get();
 
-        foreach($products as $product) {
-            $amount += $product->getPriceForCount();
+        foreach($skus as $sku) {
+            $amount += $sku->getPriceForCount();
         }
         return $amount;
     }
 
-    public static function eraseOrderAmount()
+    public function getFullAmount()
     {
-        session()->forget('full_order_amount');
-    }
+        $amount = 0;
+        foreach ($this->skus as $sku) {
+            $amount += $sku->price * $sku->countInOrder;
+        }
 
-    public static function changeFullAmount($changeAmount)
-    {
-        $amount = self::getFullAmount() + $changeAmount;
-        session(['full_order_amount' => $amount]);
-    }
-
-    public static function getFullAmount()
-    {
-        return session('full_order_amount', 0);
+        return $amount;
     }
 
     public function saveOrder($name, $phone)
     {
-        if ($this->status == 0) {
-            $this->name = $name;
-            $this->phone = $phone;
-            $this->status = 1;
-            $this->save();
-            session()->forget('orderId');
-            return true;
-        } else {
-            return false;
+        $this->name = $name;
+        $this->phone = $phone;
+        $this->status = 1;
+        $this->amount = $this->getFullAmount();
+
+        $skus = $this->skus;
+        $this->save();
+
+        foreach($skus as $skuInOrder) {
+            $this->skus()->attach($skuInOrder, [
+                'count' => $skuInOrder->countInOrder,
+                'price' => $skuInOrder->price,
+            ]);
         }
+
+        session()->forget('order');
+        return true;
     }
 }

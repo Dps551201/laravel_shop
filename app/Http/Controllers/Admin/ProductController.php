@@ -6,14 +6,19 @@ use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
+use App\Models\Property;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function index()
     {
@@ -25,7 +30,7 @@ class ProductController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function create()
     {
@@ -37,7 +42,7 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      *
      * @param ProductRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(ProductRequest $request)
     {
@@ -54,7 +59,7 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param Product $product
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|View
      */
     public function show(Product $product)
     {
@@ -65,13 +70,13 @@ class ProductController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param Product $product
-     * @return \Illuminate\Http\Response
+     * @return Factory|View
      */
     public function edit(Product $product)
     {
         $categories = Category::get();
-
-        return view('auth.products.form', compact('product','categories'));
+        $properties = Property::get();
+        return view('auth.products.form', compact('product','categories', 'properties'));
     }
 
     /**
@@ -79,7 +84,7 @@ class ProductController extends Controller
      *
      * @param ProductRequest $request
      * @param Product $product
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
     public function update(ProductRequest $request, Product $product)
     {
@@ -96,6 +101,8 @@ class ProductController extends Controller
            }
        }
 
+       $product->properties()->sync($request->property_id);
+
        $product->update($params);
        return redirect()->route('products.index');
 
@@ -105,7 +112,8 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Product $product
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
+     * @throws \Exception
      */
     public function destroy(Product $product)
     {

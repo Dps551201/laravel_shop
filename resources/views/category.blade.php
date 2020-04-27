@@ -1,17 +1,17 @@
 @extends('layouts.master')
 
-@section('title', 'Категория: ' . $category->name)
+@section('title', __('main.category') . $category->__('name'))
 
 @section('content')
     <h1>
-        {{$category->name}} {{$category->products->count()}}
+        {{$category->__('name')}}
     </h1>
     <p>
-        {{$category->description}}
+        {{$category->__('description')}}
     </p>
     <div class="row">
-        @foreach($category->products as $product)
-            @include('layouts.card', compact('product'))
+        @foreach($category->products->map->skus->flatten() as $sku)
+            @include('layouts.card', compact('sku'))
         @endforeach
     </div>
 @endsection

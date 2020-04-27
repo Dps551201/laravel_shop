@@ -16,11 +16,12 @@ class BasketIsNotEmpty
      */
     public function handle($request, Closure $next)
     {
-        $orderId = session('orderId');
-        if (!is_null($orderId) && Order::getFullAmount() > 0) {
+        $order = session('order');
+        if (!is_null($order) && $order->getFullAmount() > 0) {
             return $next($request);
         }
 
+        session()->forget('order');
         session()->flash('warning', 'Ваша корзина пуста!');
         return redirect()->route('index');
 
