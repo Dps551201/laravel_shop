@@ -19,8 +19,8 @@
                     <h4>{{ $propertyOption->property->__('name') }}: {{$propertyOption->__('name')}}</h4>
                 @endforeach
             @endisset
-            <p>{{$sku->price}} {{$currencySymbol}}</p>
-            <p>
+            <div>{{$sku->price}} {{$currencySymbol}}</div>
+            <div>
                 <form action="{{ route('basket-add', $sku) }}" method="post">
                     @csrf
                     @if($sku->isAvailable())
@@ -34,7 +34,7 @@
                        class="btn btn-default"
                        role="button">@lang('main.more')</a>
                 </form>
-            </p>
+            </div>
         </div>
     </div>
 </div>
